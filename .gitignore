@@ -1,0 +1,10 @@
+venv/
+.env
+__pycache__/
+*.pyc
+.airflow/
+logs/
+*.log
+data/raw/
+data/processed/
+data/archive/
