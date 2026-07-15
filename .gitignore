@@ -1,10 +1,49 @@
-venv/
-.env
+# Python
 __pycache__/
-*.pyc
-.airflow/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual Environment
+.venv/
+venv/
+
+# Environment Variables
+.env
+
+# Logs
 logs/
 *.log
+
+# Data
 data/raw/
 data/processed/
 data/archive/
+
+# Airflow
+airflow.db
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Pytest
+.pytest_cache/
+
+# Docker
+*.pid
+
+# AWS
+.aws/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.idea/
+
+# Build
+dist/
+build/
