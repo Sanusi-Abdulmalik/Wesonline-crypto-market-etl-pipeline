@@ -1,8 +1,9 @@
 <div align="center">
 
 # 🚀 Crypto Market ETL Pipeline
+An end-to-end cloud-based Data Engineering project that ingests live cryptocurrency market data from the CoinGecko API, transforms it into analytics-ready datasets, stores it in Amazon S3, loads it into Snowflake, and orchestrates the entire workflow using Apache Airflow.
 
-### Production-Ready Cloud Data Engineering Pipeline
+This project is being built as part of the **WesOnline Data Engineering Mentorship Program** to demonstrate modern data engineering practices and production-ready ETL pipeline development.
 
 Build Status • In Progress
 
@@ -17,6 +18,18 @@ Build Status • In Progress
 Extract • Validate • Transform • Load • Orchestrate • Analyze
 
 </div>
+
+---
+
+## 📌 Project Progress
+
+| Stage | Status |
+|-------|--------|
+| ✅ Stage 1 – Data Extraction & Transformation | Completed |
+| ✅ Stage 2 – Cloud Integration (AWS S3, Snowflake & Airflow) | Completed |
+| ⏳ Stage 3 – Gold Layer & Analytics | In Progress |
+| ⏳ Stage 4 – Power BI Dashboard | Planned |
+| ⏳ Stage 5 – Incremental ETL, Monitoring & Production Improvements | Planned |
 
 ---
 
@@ -37,25 +50,6 @@ The project demonstrates modern cloud data engineering practices including:
 - Workflow orchestration
 - Data warehousing
 - Business Intelligence
-
----
-
-# 🎓 WESOnline Data Engineering Mentorship
-
-This project was developed as part of the **WESOnline Data Engineering Mentorship Program**.
-
-For the mentorship project, I selected the **S3 + Snowflake + Airflow ETL Pipeline** track and expanded it into a production-style implementation by integrating:
-
-- Live CoinGecko API
-- Metadata-driven ETL
-- Data validation framework
-- Hive partitioning
-- Amazon S3 Data Lake
-- Apache Airflow orchestration
-- Snowflake integration
-- Power BI analytics
-
-While inspired by the mentorship curriculum, the design decisions, implementation, architecture, and enhancements in this repository are my own.
 
 ---
 
@@ -279,39 +273,42 @@ Power BI
 
 ---
 
-# ✨ Current Features
+## ✨ Features
 
-- Live CoinGecko API ingestion
-- Automatic retry mechanism
-- Batch metadata generation
-- UUID-based batch tracking
+### Stage 1
+
+- Extracts live cryptocurrency market data from the CoinGecko API
+- Stores raw JSON data using Hive-style partitioning
+- Data validation framework
 - Schema enforcement
-- Data validation
-- Hive-style partitioning
-- JSON to Parquet conversion
-- Amazon S3 upload
-- Dockerized environment
-- Apache Airflow orchestration
+- Transformation into analytics-ready Parquet datasets
+- Structured logging
+- Modular ETL architecture
+
+### Stage 2
+
+- Uploads transformed Parquet files to Amazon S3
+- Secure AWS authentication using IAM
+- Snowflake cloud data warehouse integration
+- External Stage configuration
+- Automated data loading from S3 into Snowflake
+- Apache Airflow workflow orchestration
+- Dockerized Airflow environment
+- End-to-end cloud ETL pipeline
 
 ---
+## 📌 Roadmap
 
-# 🚧 Roadmap
-
-| Status | Feature |
-|----------|----------|
-| ✅ Project Setup |
-| ✅ CoinGecko Integration |
-| ✅ Extraction Layer |
-| ✅ Validation Framework |
-| ✅ Transformation Layer |
-| ✅ Parquet Generation |
-| ✅ Amazon S3 Upload |
-| 🚧 Apache Airflow DAG |
-| ⏳ Snowflake Loading |
-| ⏳ SQL Transformations |
-| ⏳ Power BI Dashboard |
-| ⏳ GitHub Actions |
-| ⏳ Unit Testing |
+- [x] Extract cryptocurrency data
+- [x] Transform and validate datasets
+- [x] Generate Parquet files
+- [x] Upload to Amazon S3
+- [x] Integrate Snowflake
+- [x] Build Airflow pipeline
+- [ ] Gold analytics layer
+- [ ] Power BI dashboards
+- [ ] Incremental ETL
+- [ ] Monitoring & alerting
 
 ---
 
@@ -338,6 +335,22 @@ day=12/
 
 archive/
 ```
+
+---
+
+## 🧠 Key Concepts Demonstrated
+
+- ETL Pipeline Design
+- Data Validation
+- Schema Enforcement
+- Hive-style Partitioning
+- Parquet Data Lake
+- Cloud Storage (Amazon S3)
+- Data Warehousing (Snowflake)
+- Workflow Orchestration (Apache Airflow)
+- Docker Containerization
+- Modular Python Architecture
+- Cloud Authentication with IAM
 
 ---
 
@@ -468,9 +481,7 @@ This project showcases practical experience in:
 
 # 🙏 Acknowledgements
 
-Special thanks to the **WESOnline Data Engineering Mentorship Program** for providing the project framework and learning environment that inspired this implementation.
-
-This repository represents my personal implementation and extension of the project using production-oriented engineering practices.
+This project is being developed as part of the **WesOnline Data Engineering Mentorship Program**, with a focus on building production-ready cloud data engineering solutions using modern industry tools and best practices.
 
 ---
 
