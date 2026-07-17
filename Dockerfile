@@ -2,14 +2,21 @@ FROM apache/airflow:2.10.0
 
 USER root
 
-RUN apt-get update && apt-get install -y \
-    gcc \
-    build-essential \
+ENV DEBIAN_FRONTEND=noninteractive \
+    TZ=UTC
+
+RUN apt-get update -o Acquire::Check-Date=false -o Acquire::Check-Valid-Until=false && \
+    apt-get install -y --no-install-recommends \
+        gcc \
+        build-essential \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 USER airflow
 
-COPY requirements.txt /requirements.txt
+WORKDIR /opt/airflow
 
-RUN pip install --no-cache-dir -r /requirements.txtss
+COPY requirements.txt /tmp/requirements.txt
+
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r /tmp/requirements.txt

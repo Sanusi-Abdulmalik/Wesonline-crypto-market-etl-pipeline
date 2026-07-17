@@ -1,18 +1,19 @@
 """
-Crypto Market ETL Pipeline
+Apache Airflow DAG for the Crypto Market ETL Pipeline.
 
 Workflow
---------
-Extract (CoinGecko API)
-        ↓
-Transform (JSON → Parquet)
-        ↓
-Upload Silver Layer to Amazon S3
+
+Extract
+    ↓
+Transform
+    ↓
+Upload to Amazon S3
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from airflow.decorators import dag, task
+from airflow import DAG
+from airflow.operators.python import PythonOperator
 
 from scripts.extract import extract
 from scripts.transform import transform
@@ -22,45 +23,68 @@ from scripts.load_to_s3 import upload_latest_parquet
 default_args = {
     "owner": "Abdulmalik Sanusi",
     "depends_on_past": False,
-    "retries": 2,
+    "email_on_failure": False,
+    "email_on_retry": False,
+    "retries": 3,
+    "retry_delay": timedelta(minutes=5),
 }
 
 
-@dag(
+with DAG(
     dag_id="crypto_market_etl",
-    description="Crypto Market ETL Pipeline (CoinGecko → S3)",
+    description="Daily Crypto Market ETL Pipeline",
+    default_args=default_args,
     start_date=datetime(2026, 7, 1),
     schedule="@daily",
     catchup=False,
-    default_args=default_args,
+    max_active_runs=1,
     tags=[
-        "crypto",
-        "fintech",
         "etl",
+        "crypto",
         "aws",
         "s3",
-        "snowflake",
+        "airflow",
     ],
-)
-def crypto_market_pipeline():
+) as dag:
 
-    @task(task_id="extract_market_data")
-    def run_extract():
-        extract()
+    extract_task = PythonOperator(
+        task_id="extract_market_data",
+        python_callable=extract,
+    )
 
-    @task(task_id="transform_market_data")
-    def run_transform():
-        transform()
+    transform_task = PythonOperator(
+        task_id="transform_market_data",
+        python_callable=transform,
+    )
 
-    @task(task_id="upload_to_s3")
-    def run_upload():
-        upload_latest_parquet()
+    upload_task = PythonOperator(
+        task_id="upload_to_s3",
+        python_callable=upload_latest_parquet,
+    )
 
-    extract_task = run_extract()
-    transform_task = run_transform()
-    upload_task = run_upload()
+    extract_task.doc_md = """
+    ### Extract
 
-    extract_task >> transform_task >> upload_task
+    Downloads the latest cryptocurrency market data from the CoinGecko API
+    and stores it as partitioned raw JSON.
+    """
 
+    transform_task.doc_md = """
+    ### Transform
 
-dag = crypto_market_pipeline()
+    Cleans, validates, enriches and converts the raw JSON
+    into a partitioned Parquet dataset.
+    """
+
+    upload_task.doc_md = """
+    ### Load
+
+    Uploads the latest Parquet dataset
+    into the configured Amazon S3 bucket.
+    """
+
+    (
+        extract_task
+        >> transform_task
+        >> upload_task
+    )

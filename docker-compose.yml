@@ -9,6 +9,7 @@ x-airflow-common: &airflow-common
     - .env
 
   environment:
+    AIRFLOW_HOME: /opt/airflow
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
 
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
@@ -21,18 +22,17 @@ x-airflow-common: &airflow-common
 
     AIRFLOW__API__AUTH_BACKENDS: airflow.api.auth.backend.session
 
-    PYTHONPATH: /opt/project
+    PYTHONPATH: /opt/airflow
 
   volumes:
-    - ./dags:/opt/dags
-    - ./logs:/opt/logs
-    - ./plugins:/opt/plugins
-    - ./config:/opt/config
+    - ./dags:/opt/airflow/dags
+    - ./logs:/opt/airflow/logs
+    - ./plugins:/opt/airflow/plugins
+    - ./config:/opt/airflow/config
+    - .:/opt/airflow
+    - C:\Users\sansm\.aws:/home/airflow/.aws:ro
 
-    # Entire project
-    - .:/opt/project
-
-  working_dir: /opt/project
+  working_dir: /opt/airflow
 
   depends_on:
     postgres:
