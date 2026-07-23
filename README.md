@@ -3,8 +3,6 @@
 # 🚀 Crypto Market ETL Pipeline
 An end-to-end cloud-based Data Engineering project that ingests live cryptocurrency market data from the CoinGecko API, transforms it into analytics-ready datasets, stores it in Amazon S3, loads it into Snowflake, and orchestrates the entire workflow using Apache Airflow.
 
-This project is being built as part of the **WesOnline Data Engineering Mentorship Program** to demonstrate modern data engineering practices and production-ready ETL pipeline development.
-
 Build Status • In Progress
 
 ![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python)
@@ -36,6 +34,8 @@ Extract • Validate • Transform • Load • Orchestrate • Analyze
 # 📖 Overview
 
 The **Crypto Market ETL Pipeline** is a production-inspired Data Engineering project that automates the ingestion, transformation, validation, storage, and orchestration of live cryptocurrency market data.
+
+This project is being built as part of the **WesOnline Data Engineering Mentorship Program** to demonstrate modern data engineering practices and production-ready ETL pipeline development.
 
 The pipeline retrieves real-time market data from the CoinGecko API, validates and transforms it into analytics-ready Parquet datasets, stores it in Amazon S3, and prepares it for downstream analytics in Snowflake and Power BI.
 
@@ -69,81 +69,8 @@ The primary objectives of this project are to:
 
 # 🏛 Solution Architecture
 
-```mermaid
-flowchart LR
+<img width="1544" height="1058" alt="architecture" src="https://github.com/user-attachments/assets/c6f18f19-21a3-4a0b-8a08-b918256cd822" />
 
-API[CoinGecko API]
-
-EXTRACT[Extract]
-
-RAW[Raw JSON]
-
-TRANSFORM[Transform & Validation]
-
-PARQUET[Silver Parquet]
-
-S3[Amazon S3]
-
-SNOWFLAKE[Snowflake]
-
-POWERBI[Power BI Dashboard]
-
-AIRFLOW[Apache Airflow]
-
-API --> EXTRACT
-
-EXTRACT --> RAW
-
-RAW --> TRANSFORM
-
-TRANSFORM --> PARQUET
-
-PARQUET --> S3
-
-S3 --> SNOWFLAKE
-
-SNOWFLAKE --> POWERBI
-
-AIRFLOW --> EXTRACT
-
-AIRFLOW --> TRANSFORM
-
-AIRFLOW --> S3
-
-AIRFLOW --> SNOWFLAKE
-```
-
----
-
-# 🏗 Medallion Architecture
-
-```
-                Bronze Layer
-
-        Raw CoinGecko JSON Files
-
-                    │
-
-                    ▼
-
-                Silver Layer
-
-        Cleaned Parquet Dataset
-
-                    │
-
-                    ▼
-
-                 Gold Layer
-
-      Snowflake Analytical Tables
-
-                    │
-
-                    ▼
-
-          Power BI Dashboard
-```
 
 ---
 
@@ -151,152 +78,19 @@ AIRFLOW --> SNOWFLAKE
 
 | Category | Technology |
 |-----------|------------|
-| Programming | Python |
+| Language | Python 3.12 |
+| Orchestration | Apache Airflow |
+| Data Warehouse | Snowflake |
+| Data Lake | Amazon S3 |
+| Containerization | Docker |
 | Data Processing | Pandas |
 | API | CoinGecko API |
-| Workflow Orchestration | Apache Airflow |
-| Containerization | Docker |
-| Cloud Storage | Amazon S3 |
-| Data Warehouse | Snowflake |
-| BI Tool | Power BI |
-| Database | PostgreSQL |
-| Cloud SDK | boto3 |
-| Configuration | python-dotenv |
+| SQL | Snowflake SQL |
+| Storage Format | JSON, Parquet |
+| Version Control | Git & GitHub |
 
 ---
 
-# 📂 Project Structure
-
-```text
-crypto-market-etl-pipeline/
-
-│
-
-├── config/
-
-├── dags/
-
-├── data/
-
-│ ├── raw/
-
-│ ├── processed/
-
-│ └── archive/
-
-│
-
-├── logs/
-
-├── plugins/
-
-├── scripts/
-
-│ ├── extract.py
-
-│ ├── transform.py
-
-│ ├── load_to_s3.py
-
-│ ├── validations.py
-
-│ ├── utils.py
-
-│ ├── io.py
-
-│ └── logger.py
-
-│
-
-├── sql/
-
-├── Dockerfile
-
-├── docker-compose.yml
-
-├── requirements.txt
-
-├── .env
-
-└── README.md
-```
-
----
-
-# 🔄 ETL Workflow
-
-```text
-CoinGecko API
-
-        │
-
-        ▼
-
-Extract
-
-        │
-
-        ▼
-
-Validate
-
-        │
-
-        ▼
-
-Transform
-
-        │
-
-        ▼
-
-Parquet
-
-        │
-
-        ▼
-
-Amazon S3
-
-        │
-
-        ▼
-
-Snowflake
-
-        │
-
-        ▼
-
-Power BI
-```
-
----
-
-## ✨ Features
-
-### Stage 1
-
-- Extracts live cryptocurrency market data from the CoinGecko API
-- Stores raw JSON data using Hive-style partitioning
-- Data validation framework
-- Schema enforcement
-- Transformation into analytics-ready Parquet datasets
-- Structured logging
-- Modular ETL architecture
-
-### Stage 2
-
-- Uploads transformed Parquet files to Amazon S3
-- Secure AWS authentication using IAM
-- Snowflake cloud data warehouse integration
-- External Stage configuration
-- Automated data loading from S3 into Snowflake
-- Apache Airflow workflow orchestration
-- Dockerized Airflow environment
-- End-to-end cloud ETL pipeline
-
----
 ## 📌 Roadmap
 
 - [x] Extract cryptocurrency data
@@ -312,47 +106,35 @@ Power BI
 
 ---
 
-# 📊 Data Lake Structure
+# 📸 Screenshots
 
-```text
-data/
+## Airflow DAG
+The complete ETL workflow is orchestrated using Apache Airflow.
+<img width="1920" height="1080" alt="airflow-dag" src="https://github.com/user-attachments/assets/800fe686-f812-48f9-bf76-92000256df01" />
 
-raw/
+## Amazon S3 Bucket
+Cryptocurrency market data is stored in Amazon S3 using Hive-style partitioning.
+<img width="1920" height="1020" alt="S3-bucket" src="https://github.com/user-attachments/assets/8d3b23c4-949b-4924-aab1-d8a8cad97189" />
 
-year=2026/
+## Snowflake Table
+The Gold layer contains analytics-ready datasets used for reporting and visualization.
 
-month=07/
+Example metrics include:
 
-day=12/
+- Current Price
+- Market Capitalization
+- Market Cap Rank
+- 24 Hour Price Change
+- Trading Volume
+- Circulating Supply
+<img width="1920" height="1020" alt="Screenshot 2026-07-23 225439" src="https://github.com/user-attachments/assets/5ae44dfe-6b3d-47f7-a37b-e25617a15f47" />
 
-processed/
+## Power BI Dashboard
 
-year=2026/
-
-month=07/
-
-day=23/
-
-archive/
-```
-
----
-
-## 🧠 Key Concepts Demonstrated
-
-- ETL Pipeline Design
-- Data Validation
-- Schema Enforcement
-- Hive-style Partitioning
-- Parquet Data Lake
-- Cloud Storage (Amazon S3)
-- Data Warehousing (Snowflake)
-- Workflow Orchestration (Apache Airflow)
-- Docker Containerization
-- Modular Python Architecture
-- Cloud Authentication with IAM
+## Pipeline Logs
 
 ---
+
 
 # 🚀 Quick Start
 
@@ -360,44 +142,7 @@ archive/
 
 ```bash
 git clone https://github.com/Sanusi-Abdulmalik/crypto-market-etl-pipeline.git
-
 cd crypto-market-etl-pipeline
-```
-
----
-
-## Create Virtual Environment
-
-```bash
-python -m venv .venv
-```
-
-Windows
-
-```bash
-.venv\Scripts\activate
-```
-
-Linux / macOS
-
-```bash
-source .venv/bin/activate
-```
-
----
-
-## Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-## Configure AWS
-
-```bash
-aws configure
 ```
 
 ---
@@ -407,55 +152,24 @@ aws configure
 ```bash
 docker compose up -d --build
 ```
-
 ---
 
-## Execute the Pipeline
+## Trigger Pipeline
 
-Run Extraction
+Open Airflow
 
-```bash
-python -m scripts.extract
+```
+http://localhost:8080
 ```
 
-Run Transformation
-
-```bash
-python -m scripts.transform
-```
-
-Upload to Amazon S3
-
-```bash
-python -m scripts.load_to_s3
-```
+Enable the DAG and trigger a run.
 
 ---
 
 # 📈 Future Enhancements
 
-- Snowflake COPY INTO pipeline
-- Gold Layer transformation
 - Power BI dashboard
-- Data Quality Testing
-- Great Expectations
-- dbt integration
-- CI/CD with GitHub Actions
-- Terraform Infrastructure as Code
 - Slack notifications
-- AWS Secrets Manager
-
----
-
-# 📸 Screenshots
-
-The following screenshots will be added as the project progresses.
-
-- Airflow DAG
-- Amazon S3 Bucket
-- Snowflake Tables
-- Power BI Dashboard
-- Pipeline Logs
 
 ---
 
