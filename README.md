@@ -27,8 +27,8 @@ Extract • Validate • Transform • Load • Orchestrate • Analyze
 |-------|--------|
 | ✅ Stage 1 – Data Extraction & Transformation | Completed |
 | ✅ Stage 2 – Cloud Integration (AWS S3, Snowflake & Airflow) | Completed |
-| ✅ Stage 3 – Gold Layer & Analytics | In Progress |
-| ⏳ Stage 4 – Power BI Dashboard | Planned |
+| ✅ Stage 3 – Gold Layer & Analytics | Completed |
+| ⏳ Stage 4 – Power BI Dashboard | In Progress |
 | ⏳ Stage 5 – Incremental ETL, Monitoring & Production Improvements | Planned |
 
 ---
