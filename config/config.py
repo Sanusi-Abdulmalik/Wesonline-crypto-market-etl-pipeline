@@ -2,8 +2,8 @@
 Central configuration for the Crypto Market ETL Pipeline.
 """
 
-from pathlib import Path
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -34,7 +34,10 @@ for directory in (
     ARCHIVE_DIR,
     LOGS_DIR,
 ):
-    directory.mkdir(parents=True, exist_ok=True)
+    directory.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
 
 # ==========================================================
 # Pipeline Metadata
@@ -48,6 +51,8 @@ ENVIRONMENT = os.getenv(
     "ENVIRONMENT",
     "development",
 )
+
+EXECUTED_BY = "Airflow"
 
 # ==========================================================
 # CoinGecko
@@ -124,9 +129,14 @@ PRETTY_PRINT_JSON = (
 # AWS
 # ==========================================================
 
-AWS_REGION = os.getenv("AWS_REGION", "eu-west-1")
+AWS_REGION = os.getenv(
+    "AWS_REGION",
+    "eu-west-1",
+)
 
-S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME")
+S3_BUCKET_NAME = os.getenv(
+    "S3_BUCKET_NAME",
+)
 
 S3_PREFIX = "silver"
 
@@ -135,15 +145,52 @@ S3_PREFIX = "silver"
 # ==========================================================
 
 SNOWFLAKE_ACCOUNT = os.getenv("SNOWFLAKE_ACCOUNT")
-
 SNOWFLAKE_USER = os.getenv("SNOWFLAKE_USER")
-
 SNOWFLAKE_PASSWORD = os.getenv("SNOWFLAKE_PASSWORD")
-
 SNOWFLAKE_DATABASE = os.getenv("SNOWFLAKE_DATABASE")
-
 SNOWFLAKE_SCHEMA = os.getenv("SNOWFLAKE_SCHEMA")
-
 SNOWFLAKE_WAREHOUSE = os.getenv("SNOWFLAKE_WAREHOUSE")
-
 SNOWFLAKE_ROLE = os.getenv("SNOWFLAKE_ROLE")
+
+# ==========================================================
+# SQL Directories
+# ==========================================================
+
+SILVER_SQL_DIR = SQL_DIR / "silver"
+
+GOLD_SQL_DIR = SQL_DIR / "gold"
+
+QUALITY_SQL_DIR = SQL_DIR / "quality"
+
+AUDIT_SQL_DIR = SQL_DIR / "audit"
+
+# ==========================================================
+# SQL Files
+# ==========================================================
+
+SILVER_SQL_FILE = (
+    SILVER_SQL_DIR
+    / "load_silver.sql"
+)
+
+GOLD_SQL_FILE = (
+    GOLD_SQL_DIR
+    / "build_gold.sql"
+)
+
+QUALITY_SQL_FILE = (
+    QUALITY_SQL_DIR
+    / "data_quality_checks.sql"
+)
+
+# ==========================================================
+# Pipeline Stages
+# ==========================================================
+
+STAGE_BRONZE = "Bronze"
+
+STAGE_SILVER = "Silver"
+
+STAGE_GOLD = "Gold"
+
+STAGE_QUALITY = "Quality"

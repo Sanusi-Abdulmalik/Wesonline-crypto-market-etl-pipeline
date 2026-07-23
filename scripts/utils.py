@@ -1,5 +1,5 @@
 """
-Utility functions for the Crypto Market ETL Pipeline.
+General utility functions for the Crypto Market ETL Pipeline.
 """
 
 from datetime import datetime, timezone
@@ -12,37 +12,60 @@ import uuid
 # Date & Time Utilities
 # ==========================================================
 
-def current_datetime():
+def current_datetime() -> datetime:
     """
     Return the current UTC datetime.
     """
     return datetime.now(timezone.utc)
 
 
-def timestamp():
+def current_timestamp_string() -> str:
     """
-    Return HHMMSS timestamp.
+    Return UTC timestamp formatted for Snowflake.
 
     Example:
-        184530
+        2026-07-23 10:30:45
+    """
+    return current_datetime().strftime("%Y-%m-%d %H:%M:%S")
+
+
+def format_datetime(series):
+    """
+    Convert pandas datetime column into Snowflake format.
+
+    Output:
+        YYYY-MM-DD HH:MM:SS
+    """
+
+    return (
+        series.dt.tz_convert("UTC")
+        .dt.strftime("%Y-%m-%d %H:%M:%S")
+    )
+
+
+def timestamp() -> str:
+    """
+    HHMMSS timestamp.
+
+    Example:
+        104530
     """
     return current_datetime().strftime("%H%M%S")
 
 
-def run_id():
+def run_id() -> str:
     """
-    Human-readable pipeline run ID.
+    Pipeline run identifier.
+    """
 
-    Example:
-        20260711T184530Z
-    """
     return current_datetime().strftime("%Y%m%dT%H%M%SZ")
 
 
-def generate_batch_id():
+def generate_batch_id() -> str:
     """
-    Generate a unique batch ID for each ETL run.
+    Generate unique batch identifier.
     """
+
     return str(uuid.uuid4())
 
 
@@ -51,33 +74,22 @@ def generate_batch_id():
 # ==========================================================
 
 def create_partition_path(base_directory: Path) -> Path:
-    """
-    Create a Hive-style partition.
-
-    Example:
-
-    data/raw/
-
-        year=2026/
-            month=07/
-                day=11/
-    """
 
     now = current_datetime()
 
-    partition_path = (
+    partition = (
         base_directory
         / f"year={now:%Y}"
         / f"month={now:%m}"
         / f"day={now:%d}"
     )
 
-    partition_path.mkdir(
+    partition.mkdir(
         parents=True,
         exist_ok=True,
     )
 
-    return partition_path
+    return partition
 
 
 def create_file_path(
@@ -85,36 +97,24 @@ def create_file_path(
     prefix: str,
     extension: str,
 ) -> Path:
-    """
-    Generate a timestamped file path inside a Hive partition.
-
-    Example:
-    data/processed/
-        year=2026/
-            month=07/
-                day=11/
-                    crypto_market_184530.parquet
-    """
 
     partition = create_partition_path(base_directory)
 
-    filename = f"{prefix}_{timestamp()}.{extension}"
+    filename = (
+        f"{prefix}_{timestamp()}.{extension}"
+    )
 
     return partition / filename
 
 
 # ==========================================================
-# File Discovery
+# File Utilities
 # ==========================================================
 
-def get_latest_file(directory: Path, extension: str) -> Path:
-    """
-    Return the latest file recursively.
-
-    Example:
-
-    get_latest_file(RAW_DATA_DIR, "json")
-    """
+def get_latest_file(
+    directory: Path,
+    extension: str,
+) -> Path:
 
     files = list(directory.rglob(f"*.{extension}"))
 
@@ -129,15 +129,10 @@ def get_latest_file(directory: Path, extension: str) -> Path:
     )
 
 
-# ==========================================================
-# Archive Utilities
-# ==========================================================
-
-def archive_file(file_path: Path, archive_directory: Path) -> Path:
-    """
-    Move a processed file into the archive directory,
-    preserving the filename.
-    """
+def archive_file(
+    file_path: Path,
+    archive_directory: Path,
+) -> Path:
 
     archive_directory.mkdir(
         parents=True,
@@ -164,16 +159,20 @@ def build_pipeline_metadata(
     pipeline_name: str,
     pipeline_version: str,
     environment: str,
-):
-    """
-    Build standard ETL metadata.
-    """
+) -> dict:
 
     return {
+
         "batch_id": batch_id,
+
         "run_id": run_id(),
-        "pipeline": pipeline_name,
-        "version": pipeline_version,
+
+        "pipeline_name": pipeline_name,
+
+        "pipeline_version": pipeline_version,
+
         "environment": environment,
-        "ingested_at": current_datetime().isoformat(),
+
+        "ingested_at": current_timestamp_string(),
+
     }

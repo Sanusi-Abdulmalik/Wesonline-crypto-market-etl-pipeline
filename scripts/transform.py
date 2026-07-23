@@ -41,12 +41,12 @@ DATASET = "crypto_market"
 
 
 # ==========================================================
-# Extract Records
+# Load Raw Payload
 # ==========================================================
 
-def load_raw_payload():
+def load_raw_payload() -> dict:
     """
-    Load the latest raw JSON payload.
+    Load the most recent raw CoinGecko payload.
     """
 
     raw_file = get_latest_file(
@@ -60,7 +60,7 @@ def load_raw_payload():
 
 
 # ==========================================================
-# Create DataFrame
+# Build DataFrame
 # ==========================================================
 
 def build_dataframe(payload: dict) -> pd.DataFrame:
@@ -68,9 +68,7 @@ def build_dataframe(payload: dict) -> pd.DataFrame:
     Convert JSON payload into a DataFrame.
     """
 
-    records = payload["data"]
-
-    df = pd.DataFrame(records)
+    df = pd.DataFrame(payload["data"])
 
     logger.info(f"Loaded {len(df)} records.")
 
@@ -81,38 +79,65 @@ def build_dataframe(payload: dict) -> pd.DataFrame:
 # Select Required Columns
 # ==========================================================
 
-def select_columns(df: pd.DataFrame) -> pd.DataFrame:
+def select_columns(
+    df: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Keep only required columns.
+    """
 
-    columns = get_selected_columns(DATASET)
-
-    return df[columns]
+    return df[
+        get_selected_columns(DATASET)
+    ]
 
 
 # ==========================================================
 # Apply Schema
 # ==========================================================
 
-def apply_schema(df: pd.DataFrame) -> pd.DataFrame:
+def apply_schema(
+    df: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Apply data types and standardize datetime columns.
+    """
 
     logger.info("Applying schema...")
 
     dtype_map = get_dtype_mapping(DATASET)
 
-    df = df.astype(dtype_map)
+    datetime_columns = set(
+        get_datetime_columns(DATASET)
+    )
 
-    for column in get_datetime_columns(DATASET):
+    # Apply non-datetime dtypes first
+    non_datetime_dtypes = {
+        column: dtype
+        for column, dtype in dtype_map.items()
+        if column not in datetime_columns
+    }
 
-        df[column] = pd.to_datetime(
-            df[column],
-            utc=True,
-            errors="coerce",
+    df = df.astype(non_datetime_dtypes)
+
+    # Convert timestamps
+    for column in datetime_columns:
+
+        logger.info(f"Formatting {column}")
+
+        df[column] = (
+            pd.to_datetime(
+                df[column],
+                utc=True,
+                errors="coerce",
+            )
+            .dt.strftime("%Y-%m-%d")
         )
 
     return df
 
 
 # ==========================================================
-# Add Metadata
+# Add Pipeline Metadata
 # ==========================================================
 
 def add_pipeline_metadata(
@@ -131,16 +156,23 @@ def add_pipeline_metadata(
 
     df["environment"] = ENVIRONMENT
 
-    df["ingested_at"] = current_datetime()
+    df["ingested_at"] = current_datetime().strftime(
+        "%Y-%m-%d"
+    )
 
     return df
 
 
 # ==========================================================
-# Save Silver Layer
+# Save Silver Dataset
 # ==========================================================
 
-def save_dataframe(df: pd.DataFrame):
+def save_dataframe(
+    df: pd.DataFrame,
+):
+    """
+    Save transformed dataset to Parquet.
+    """
 
     output_path = create_file_path(
         PROCESSED_DATA_DIR,
@@ -165,6 +197,9 @@ def save_dataframe(df: pd.DataFrame):
 # ==========================================================
 
 def transform():
+    """
+    Execute the transformation pipeline.
+    """
 
     logger.info("=" * 60)
     logger.info("Starting Transformation Pipeline")

@@ -1,90 +1,158 @@
 """
 Apache Airflow DAG for the Crypto Market ETL Pipeline.
 
-Workflow
+Pipeline Flow
 
-Extract
-    ↓
-Transform
-    ↓
-Upload to Amazon S3
+    CoinGecko API
+          │
+          ▼
+      Extract
+          │
+          ▼
+     Transform
+          │
+          ▼
+     Upload to S3
+          │
+          ▼
+   Load Silver Layer
+      (MERGE)
+          │
+          ▼
+   Data Quality Checks
+          │
+          ▼
+    Build Gold Layer
 """
 
 from datetime import datetime, timedelta
 
 from airflow import DAG
-from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
 
-from scripts.extract import extract
-from scripts.transform import transform
-from scripts.load_to_s3 import upload_latest_parquet
 
+# ==========================================================
+# Default Arguments
+# ==========================================================
 
 default_args = {
     "owner": "Abdulmalik Sanusi",
     "depends_on_past": False,
-    "email_on_failure": False,
-    "email_on_retry": False,
-    "retries": 3,
+    "retries": 2,
     "retry_delay": timedelta(minutes=5),
 }
 
 
+# ==========================================================
+# DAG Definition
+# ==========================================================
+
 with DAG(
     dag_id="crypto_market_etl",
-    description="Daily Crypto Market ETL Pipeline",
-    default_args=default_args,
+    description="End-to-end Crypto Market ETL Pipeline",
     start_date=datetime(2026, 7, 1),
     schedule="@daily",
     catchup=False,
+    default_args=default_args,
     max_active_runs=1,
     tags=[
-        "etl",
         "crypto",
+        "etl",
+        "snowflake",
         "aws",
-        "s3",
         "airflow",
     ],
 ) as dag:
 
-    extract_task = PythonOperator(
-        task_id="extract_market_data",
-        python_callable=extract,
+    dag.doc_md = """
+# Crypto Market ETL Pipeline
+
+## Pipeline
+
+1. Extract cryptocurrency data from the CoinGecko API.
+2. Transform and enrich the dataset.
+3. Save the processed data as Parquet.
+4. Upload Parquet files to Amazon S3.
+5. Load data into the Snowflake Silver layer using MERGE.
+6. Execute data quality checks.
+7. Build analytical Gold views.
+
+---
+
+## Technologies
+
+- Python
+- Apache Airflow
+- Snowflake
+- Amazon S3
+- Pandas
+- PyArrow
+- CoinGecko API
+"""
+
+    # ======================================================
+    # Extract
+    # ======================================================
+
+    extract_task = BashOperator(
+        task_id="extract_data",
+        bash_command="python -m scripts.extract",
     )
 
-    transform_task = PythonOperator(
-        task_id="transform_market_data",
-        python_callable=transform,
+    # ======================================================
+    # Transform
+    # ======================================================
+
+    transform_task = BashOperator(
+        task_id="transform_data",
+        bash_command="python -m scripts.transform",
     )
 
-    upload_task = PythonOperator(
+    # ======================================================
+    # Upload to S3
+    # ======================================================
+
+    upload_task = BashOperator(
         task_id="upload_to_s3",
-        python_callable=upload_latest_parquet,
+        bash_command="python -m scripts.load_to_s3",
     )
 
-    extract_task.doc_md = """
-    ### Extract
+    # ======================================================
+    # Load Silver Layer
+    # ======================================================
 
-    Downloads the latest cryptocurrency market data from the CoinGecko API
-    and stores it as partitioned raw JSON.
-    """
+    silver_task = BashOperator(
+        task_id="load_silver_layer",
+        bash_command="python -m scripts.load_to_snowflake",
+    )
 
-    transform_task.doc_md = """
-    ### Transform
+    # ======================================================
+    # Data Quality
+    # ======================================================
 
-    Cleans, validates, enriches and converts the raw JSON
-    into a partitioned Parquet dataset.
-    """
+    quality_task = BashOperator(
+        task_id="run_data_quality",
+        bash_command="python -m scripts.data_quality",
+    )
 
-    upload_task.doc_md = """
-    ### Load
+    # ======================================================
+    # Build Gold Layer
+    # ======================================================
 
-    Uploads the latest Parquet dataset
-    into the configured Amazon S3 bucket.
-    """
+    gold_task = BashOperator(
+        task_id="build_gold_layer",
+        bash_command="python -m scripts.load_gold",
+    )
+
+    # ======================================================
+    # Pipeline Dependencies
+    # ======================================================
 
     (
         extract_task
         >> transform_task
         >> upload_task
+        >> silver_task
+        >> quality_task
+        >> gold_task
     )
