@@ -115,11 +115,6 @@ Example metrics include:
 ![Snowflake](docs/screenshots/snowflake.png)
 
 ## Power BI Dashboard
-
-## Pipeline Logs
->>>>>>> 7ff20ea4ee2244ef5df608dd65b05ac4ae6901f1
-
-## Power BI Dashboard
 ![Dashboard Overview](docs/screenshots/dashboard_overview.png)
 ---
 
