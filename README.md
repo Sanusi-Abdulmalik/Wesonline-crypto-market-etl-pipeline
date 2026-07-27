@@ -3,10 +3,6 @@
 # 🚀 Crypto Market ETL Pipeline
 An end-to-end cloud-based Data Engineering project that ingests live cryptocurrency market data from the CoinGecko API, transforms it into analytics-ready datasets, stores it in Amazon S3, loads it into Snowflake, and orchestrates the entire workflow using Apache Airflow.
 
-<<<<<<< HEAD
-=======
-Build Status • In Progress
->>>>>>> 7ff20ea4ee2244ef5df608dd65b05ac4ae6901f1
 
 ![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python)
 ![Apache Airflow](https://img.shields.io/badge/Apache%20Airflow-2.10-red?logo=apacheairflow)
@@ -21,22 +17,6 @@ Extract • Validate • Transform • Load • Orchestrate • Analyze
 </div>
 
 ---
-
-<<<<<<< HEAD
-=======
-## 📌 Project Progress
-
-| Stage | Status |
-|-------|--------|
-| ✅ Stage 1 – Data Extraction & Transformation | Completed |
-| ✅ Stage 2 – Cloud Integration (AWS S3, Snowflake & Airflow) | Completed |
-| ✅ Stage 3 – Gold Layer & Analytics | Completed |
-| ⏳ Stage 4 – Power BI Dashboard | In Progress |
-| ⏳ Stage 5 – Incremental ETL, Monitoring & Production Improvements | Planned |
-
----
-
->>>>>>> 7ff20ea4ee2244ef5df608dd65b05ac4ae6901f1
 # 📖 Overview
 
 The **Crypto Market ETL Pipeline** is a production-inspired Data Engineering project that automates the ingestion, transformation, validation, storage, and orchestration of live cryptocurrency market data.
@@ -75,12 +55,7 @@ The primary objectives of this project are to:
 
 # 🏛 Solution Architecture
 
-<<<<<<< HEAD
 ![Architecture](docs/screenshots/architecture.png)
-=======
-<img width="1544" height="1058" alt="architecture" src="https://github.com/user-attachments/assets/c6f18f19-21a3-4a0b-8a08-b918256cd822" />
->>>>>>> 7ff20ea4ee2244ef5df608dd65b05ac4ae6901f1
-
 
 ---
 
@@ -110,21 +85,13 @@ The primary objectives of this project are to:
 - [x] Integrate Snowflake
 - [x] Build Airflow pipeline
 - [x] Gold analytics layer
-<<<<<<< HEAD
 - [x] Power BI dashboards
-=======
-- [ ] Power BI dashboards
-- [ ] Incremental ETL
-- [ ] Monitoring & alerting
-
->>>>>>> 7ff20ea4ee2244ef5df608dd65b05ac4ae6901f1
 ---
 
 # 📸 Screenshots
 
 ## Airflow DAG
 The complete ETL workflow is orchestrated using Apache Airflow.
-<<<<<<< HEAD
 
 ![DAG](docs/screenshots/dag.png)
 
@@ -146,25 +113,6 @@ Example metrics include:
 - Circulating Supply
 
 ![Snowflake](docs/screenshots/snowflake.png)
-=======
-<img width="1920" height="1080" alt="airflow-dag" src="https://github.com/user-attachments/assets/800fe686-f812-48f9-bf76-92000256df01" />
-
-## Amazon S3 Bucket
-Cryptocurrency market data is stored in Amazon S3 using Hive-style partitioning.
-<img width="1920" height="1020" alt="S3-bucket" src="https://github.com/user-attachments/assets/8d3b23c4-949b-4924-aab1-d8a8cad97189" />
-
-## Snowflake Table
-The Gold layer contains analytics-ready datasets used for reporting and visualization.
-
-Example metrics include:
-
-- Current Price
-- Market Capitalization
-- Market Cap Rank
-- 24 Hour Price Change
-- Trading Volume
-- Circulating Supply
-<img width="1920" height="1020" alt="Screenshot 2026-07-23 225439" src="https://github.com/user-attachments/assets/5ae44dfe-6b3d-47f7-a37b-e25617a15f47" />
 
 ## Power BI Dashboard
 
