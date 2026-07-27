@@ -149,13 +149,6 @@ Enable the DAG and trigger a run.
 
 ---
 
-# 📈 Future Enhancements
-
-- Power BI dashboard
-- Slack notifications
-
----
-
 # 💼 Skills Demonstrated
 
 This project showcases practical experience in:
