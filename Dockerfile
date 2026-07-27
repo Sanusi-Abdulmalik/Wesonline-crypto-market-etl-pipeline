@@ -1,22 +1,21 @@
-FROM apache/airflow:2.10.0
+FROM apache/airflow:2.10.0-python3.12
 
 USER root
 
-ENV DEBIAN_FRONTEND=noninteractive \
-    TZ=UTC
-
-RUN apt-get update -o Acquire::Check-Date=false -o Acquire::Check-Valid-Until=false && \
-    apt-get install -y --no-install-recommends \
-        gcc \
-        build-essential \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y \
+    default-jre \
+    curl \
+    gcc \
+    g++ \
+    build-essential \
+    && apt-get clean
 
 USER airflow
 
+COPY requirements.txt /requirements.txt
+
+RUN pip install --no-cache-dir -r /requirements.txt
+
+ENV PYTHONPATH=/opt/airflow
+
 WORKDIR /opt/airflow
-
-COPY requirements.txt /tmp/requirements.txt
-
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r /tmp/requirements.txt
