@@ -7,6 +7,8 @@ from pathlib import Path
 import boto3
 from botocore.exceptions import ClientError
 from config.config import (
+    AWS_ACCESS_KEY_ID,
+    AWS_SECRET_ACCESS_KEY,
     AWS_REGION,
     S3_BUCKET_NAME,
     S3_PREFIX,
@@ -24,6 +26,8 @@ def create_s3_client():
 
     return boto3.client(
         "s3",
+        aws_accesskey_key_id=AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
         region_name=AWS_REGION,
     )
 
